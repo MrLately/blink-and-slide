@@ -5,6 +5,12 @@ import signal
 import sys
 import argparse
 
+brightness = 0.2
+color = (0, 0, 255)
+slide_wait = 0.05
+blink_wait = 0.5
+block_size = 3
+
 def handle_keyboard_interrupt(signum, frame):
     pixels.fill((0, 0, 0,))
     pixels.show()
@@ -17,13 +23,8 @@ pixel_pin = board.D18
 num_pixels = 60
 ORDER = neopixel.GRB
 pixels = neopixel.NeoPixel(
-    pixel_pin, num_pixels, brightness=0.2, auto_write=False, pixel_order=ORDER
+    pixel_pin, num_pixels, brightness=brightness, auto_write=False, pixel_order=ORDER
 )
-
-color = (0, 0, 255)
-slide_wait = 0.05
-blink_wait = 0.5
-block_size = 3
 
 def slide_pattern():
     for i in range(0, num_pixels, block_size):
@@ -42,24 +43,24 @@ def slide_pattern():
         time.sleep(slide_wait)
 
 def blink_pattern():
-    while True:
-        pixels.fill((0, 0, 0))
-        for i in range(block_size):
-            pixels[i] = color
-        pixels.show()
-        time.sleep(blink_wait)
-        pixels.fill((0, 0, 0))
-        for i in range(num_pixels - block_size, num_pixels):
-            pixels[i] = color
-        pixels.show()
-        time.sleep(blink_wait)
+    pixels.fill((0, 0, 0))
+    for i in range(block_size):
+        pixels[i] = color
+    pixels.show()
+    time.sleep(blink_wait)
+    pixels.fill((0, 0, 0))
+    for i in range(num_pixels - block_size, num_pixels):
+        pixels[i] = color
+    pixels.show()
+    time.sleep(blink_wait)
 
 def main_slide():
     while True:
         slide_pattern()
 
 def main_blink():
-    blink_pattern()
+    while True:
+        blink_pattern()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
